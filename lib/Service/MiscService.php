@@ -30,7 +30,7 @@
 namespace OCA\Files_FromMail\Service;
 
 use OCA\Files_FromMail\AppInfo\Application;
-use OCP\ILogger;
+use Psr\Log\LoggerInterface;
 
 
 /**
@@ -41,11 +41,11 @@ use OCP\ILogger;
 class MiscService {
 
 
-	/** @var ILogger */
+	/** @var LoggerInterface */
 	private $logger;
 
 
-	public function __construct(ILogger $logger) {
+	public function __construct(LoggerInterface $logger) {
 		$this->logger = $logger;
 	}
 
@@ -55,13 +55,7 @@ class MiscService {
 	 * @param int $level
 	 */
 	public function log(string $message, int $level = 2): void {
-		$data = array(
-			'app'   => Application::APP_NAME,
-			'level' => $level
-		);
-
-		$this->logger->log($level, $message, $data);
+		$this->logger->info($message, ['app' => Application::APP_NAME]);
 	}
 
 }
-

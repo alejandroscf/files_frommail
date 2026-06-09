@@ -31,7 +31,6 @@ namespace OCA\Files_FromMail\Service;
 
 
 use Exception;
-use OC;
 use OCA\Files_FromMail\Exceptions\AddressAlreadyExistException;
 use OCA\Files_FromMail\Exceptions\AddressInfoException;
 use OCA\Files_FromMail\Exceptions\InvalidAddressException;
@@ -39,6 +38,7 @@ use OCA\Files_FromMail\Exceptions\NotAFolderException;
 use OCA\Files_FromMail\Exceptions\UnknownAddressException;
 use OCP\Files\FileInfo;
 use OCP\Files\Folder;
+use OCP\Files\IRootFolder;
 use OCP\Files\GenericFileException;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
@@ -61,6 +61,9 @@ class MailService {
 	/** @var MiscService */
 	private $miscService;
 
+	/** @var IRootFolder */
+	private $rootFolder;
+
 	/** @var int */
 	private $count = 0;
 
@@ -70,10 +73,12 @@ class MailService {
 	 *
 	 * @param ConfigService $configService
 	 * @param MiscService $miscService
+	 * @param IRootFolder $rootFolder
 	 */
-	function __construct(ConfigService $configService, MiscService $miscService) {
+	function __construct(ConfigService $configService, MiscService $miscService, IRootFolder $rootFolder) {
 		$this->configService = $configService;
 		$this->miscService = $miscService;
+		$this->rootFolder = $rootFolder;
 	}
 
 
@@ -185,7 +190,7 @@ class MailService {
 	 * @throws NotPermittedException
 	 */
 	private function getMailFolder(string $userId, string $to, string $from): Folder {
-		$node = OC::$server->getUserFolder($userId);
+		$node = $this->rootFolder->getUserFolder($userId);
 		$to = $this->parseMailAddress($to);
 		$from = $this->parseMailAddress($from);
 

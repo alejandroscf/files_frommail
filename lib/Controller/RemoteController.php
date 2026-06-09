@@ -35,6 +35,8 @@ use OCA\Files_FromMail\Service\MailService;
 use OCA\Files_FromMail\Service\MiscService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\NoAdminRequired;
+use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\IRequest;
 
@@ -76,13 +78,12 @@ class RemoteController extends Controller {
 	/**
 	 * endpoint that will receive mail content from NextcloudMailCatcher.php
 	 *
-	 * @NoAdminRequired
-	 * @NoCSRFRequired
-	 *
 	 * @param $content
 	 *
 	 * @return DataResponse
 	 */
+	#[NoAdminRequired]
+	#[NoCSRFRequired]
 	public function getContent($content): DataResponse {
 		try {
 			if ($content !== 'null') {

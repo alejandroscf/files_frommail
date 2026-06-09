@@ -11,7 +11,7 @@
 
 ]]>
 	</description>
-	<version>0.4.0</version>
+	<version>0.5.0</version>
 	<licence>agpl</licence>
 	<author>Maxence Lange</author>
 	<namespace>Files_FromMail</namespace>
@@ -27,7 +27,8 @@
 	<screenshot>https://raw.githubusercontent.com/nextcloud/files_frommail/master/screenshots/v0.1.0.png</screenshot>
 
 	<dependencies>
-		<nextcloud min-version="18" max-version="18"/>
+		<php min-version="8.2"/>
+		<nextcloud min-version="33" max-version="35"/>
 	</dependencies>
 
 	<settings>

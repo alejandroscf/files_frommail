@@ -35,6 +35,7 @@ use OCA\Files_FromMail\Service\MailService;
 use OCA\Files_FromMail\Service\MiscService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\AdminRequired;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\IRequest;
 
@@ -73,6 +74,7 @@ class NavigationController extends Controller {
 	/**
 	 * @return DataResponse
 	 */
+	#[AdminRequired]
 	public function getMailbox(): DataResponse {
 		try {
 			$mailbox = $this->mailService->getMailAddresses();
@@ -90,6 +92,7 @@ class NavigationController extends Controller {
 	 *
 	 * @return DataResponse
 	 */
+	#[AdminRequired]
 	public function newMailbox(string $address, string $password): DataResponse {
 		try {
 			$this->mailService->addMailAddress($address, $password);
@@ -106,6 +109,7 @@ class NavigationController extends Controller {
 	 *
 	 * @return DataResponse
 	 */
+	#[AdminRequired]
 	public function deleteMailbox(string $address): DataResponse {
 		try {
 			$this->mailService->removeMailAddress($address);
