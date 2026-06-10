@@ -30,7 +30,7 @@
 namespace OCA\Files_FromMail\Command;
 
 use Exception;
-use OC\Core\Command\Base;
+use Symfony\Component\Console\Command\Command;
 use OCA\Files_FromMail\Exceptions\AddressAlreadyExistException;
 use OCA\Files_FromMail\Exceptions\FakeException;
 use OCA\Files_FromMail\Exceptions\InvalidAddressException;
@@ -48,7 +48,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @package OCA\Files_FromMail\Command
  */
-class Addresses extends Base {
+class Addresses extends Command {
 
 
 	/** @var MailService */
@@ -75,8 +75,7 @@ class Addresses extends Base {
 	 * ./occ files_frommail:address --password mail_address password
 	 *
 	 */
-	protected function configure() {
-		parent::configure();
+	protected function configure(): void {
 		$this->setName('files_frommail:address')
 			 ->setDescription('manage the linked groups')
 			 ->addOption('add', 'a', InputOption::VALUE_NONE, 'add a new mail address')
@@ -128,7 +127,7 @@ class Addresses extends Base {
 
 		$addresses = $this->mailService->getMailAddresses();
 
-		if (sizeof($addresses) === 0) {
+		if (count($addresses) === 0) {
 			$output->writeln('no mail address');
 			throw new FakeException();
 		}

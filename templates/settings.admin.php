@@ -1,7 +1,7 @@
 <?php
 
-script('files_frommail', 'admin');
-style('files_frommail', 'admin');
+\OCP\Util::addScript('files_frommail', 'admin');
+\OCP\Util::addStyle('files_frommail', 'admin');
 
 /** @var \OCP\IL10N $l */
 ?>
