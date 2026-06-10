@@ -28,9 +28,9 @@
 
 
 $config = [
-	'nextcloud' => 'https://cloud.example.net/',
-	'username'  => 'frommail',
-	'password'  => 'Ledxc-jRFiR-wBMXD-jyyjt-Y87CZ',
+	'nextcloud' => 'https://your-nextcloud.example.com/',
+	'username'  => 'your_username',
+	'password'  => 'your_app_token',
 	'debug'     => false
 ];
 
