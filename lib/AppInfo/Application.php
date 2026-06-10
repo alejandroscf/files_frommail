@@ -30,24 +30,23 @@
 namespace OCA\Files_FromMail\AppInfo;
 
 use OCP\AppFramework\App;
+use OCP\AppFramework\Bootstrap\IBootContext;
+use OCP\AppFramework\Bootstrap\IBootstrap;
+use OCP\AppFramework\Bootstrap\IRegistrationContext;
 
 
-/**
- * Class Application
- *
- * @package OCA\Files_FromMail\AppInfo
- */
-class Application extends App {
+class Application extends App implements IBootstrap {
 
+	public const APP_NAME = 'files_frommail';
 
-	const APP_NAME = 'files_frommail';
+	public function __construct() {
+		parent::__construct(self::APP_NAME);
+	}
 
+	public function register(IRegistrationContext $context): void {
+	}
 
-	/**
-	 * @param array $params
-	 */
-	public function __construct(array $params = array()) {
-		parent::__construct(self::APP_NAME, $params);
+	public function boot(IBootContext $context): void {
 	}
 
 }
