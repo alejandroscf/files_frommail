@@ -129,7 +129,7 @@ class NextcloudMailCatcher {
 	 */
 	private function debugCurl($curl, $result): void {
 		if ($result === false) {
-			$this->debug('Mail NOT forwarded: ' . curl_error($curl));
+			$this->fail('Mail NOT forwarded: ' . curl_error($curl));
 
 			return;
 		}
@@ -137,7 +137,7 @@ class NextcloudMailCatcher {
 		try {
 			$this->debugCurlResponseCode($curl);
 		} catch (Exception $e) {
-			$this->debug('Mail NOT forwarded: ' . $e->getMessage());
+			$this->fail('Mail NOT forwarded: ' . $e->getMessage() . ' - response: ' . $result);
 
 			return;
 		}
@@ -232,6 +232,21 @@ class NextcloudMailCatcher {
 		echo $string . "\n";
 //		$log = '/tmp/' . basename(__FILE__, '.php') . '.log';
 //		file_put_contents($log, date('Y-m-d H:i:s') . ' ' . $string . "\n", FILE_APPEND);
+	}
+
+
+	/**
+	 * reports a failure regardless of the 'debug' setting and stops the script with a
+	 * non-zero exit code, so the calling MDA (e.g. fetchmail) knows the mail was not
+	 * processed and can keep it on the server for a retry instead of discarding it.
+	 *
+	 * @param string $reason
+	 */
+	private function fail(string $reason): void {
+		fwrite(STDERR, $reason . "\n");
+		$this->debug($reason);
+
+		exit(1);
 	}
 
 }

@@ -87,6 +87,8 @@ class MailService {
 	 *
 	 * @param string $content
 	 * @param string $userId
+	 *
+	 * @throws Exception
 	 */
 	public function parseMail(string $content, string $userId): void {
 		$mail = new Parser();
@@ -96,6 +98,7 @@ class MailService {
 		$data['id'] = date($this->configService->getAppValue(ConfigService::FROMMAIL_FILENAMEID));
 		$data['userId'] = $userId;
 
+		$errors = [];
 		$done = [];
 		$toAddresses = array_merge($mail->getAddresses('to'), $mail->getAddresses('cc'));
 		foreach ($toAddresses as $toAddress) {
@@ -108,9 +111,14 @@ class MailService {
 				$this->generateLocalContentFromMail($mail, $to, $data);
 			} catch (Exception $e) {
 				$this->miscService->log('could not generate LocalContent from Mail - ' . $e->getMessage());
+				$errors[] = $to . ': ' . $e->getMessage();
 			}
 
 			$done[] = $to;
+		}
+
+		if (!empty($errors)) {
+			throw new Exception('could not generate LocalContent from Mail - ' . implode('; ', $errors));
 		}
 	}
 

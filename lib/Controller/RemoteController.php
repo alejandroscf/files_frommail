@@ -94,7 +94,7 @@ class RemoteController extends Controller {
 		} catch (Exception $e) {
 			$this->miscService->log('issue while getContent() : ' . $e->getMessage());
 
-			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_CREATED);
+			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		}
 	}
 
