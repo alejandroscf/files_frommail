@@ -252,10 +252,23 @@ class MailService {
 	 * @throws LockedException
 	 */
 	private function createLocalFile(Folder $folder, string $id, string $filename, string $content): void {
-		$new = $folder->newFile($id . '-' . $this->count . '_' . $filename);
+		$new = $folder->newFile($id . '-' . $this->count . '_' . $this->sanitizeFilename($filename));
 		$new->putContent($content);
 
 		$this->count++;
+	}
+
+
+	/**
+	 * replace characters that are not safe to use in a filename (path separators, etc.)
+	 * with an underscore, so a mail subject or attachment name can't break the file path.
+	 *
+	 * @param string $filename
+	 *
+	 * @return string
+	 */
+	private function sanitizeFilename(string $filename): string {
+		return preg_replace('/[\/\\\\:*?"<>|\x00-\x1F]/', '_', $filename) ?? '_';
 	}
 
 
