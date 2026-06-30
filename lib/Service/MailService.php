@@ -260,7 +260,7 @@ class MailService {
 	 * @throws LockedException
 	 */
 	private function createLocalFile(Folder $folder, string $id, string $filename, string $content): void {
-		$new = $folder->newFile($id . '-' . $this->count . '_' . $this->sanitizeFilename($filename));
+		$new = $folder->newFile($this->sanitizeFilename($id . '-' . $this->count . '_' . $filename));
 		$new->putContent($content);
 
 		$this->count++;
