@@ -294,7 +294,7 @@ class MailService {
 		$addresses = $this->getMailAddresses();
 		$new = [];
 		foreach ($addresses as $entry) {
-			if ($entry['address'] === $address) {
+			if (strcasecmp($entry['address'], $address) === 0) {
 				$entry['password'] = $password;
 			}
 			$new[] = $entry;
@@ -317,7 +317,7 @@ class MailService {
 
 		$new = [];
 		foreach ($addresses as $entry) {
-			if ($entry['address'] !== $address) {
+			if (strcasecmp($entry['address'], $address) !== 0) {
 				$new[] = $entry;
 			}
 		}
@@ -363,7 +363,7 @@ class MailService {
 	private function getMailAddressInfo(string $address): array {
 		$addresses = $this->getMailAddresses();
 		foreach ($addresses as $entry) {
-			if ($entry['address'] === $address) {
+			if (strcasecmp($entry['address'], $address) === 0) {
 				return $entry;
 			}
 		}
