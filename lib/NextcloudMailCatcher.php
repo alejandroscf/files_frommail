@@ -142,7 +142,23 @@ class NextcloudMailCatcher {
 			return;
 		}
 
+		$this->warnIfNotFiled($result);
 		$this->debug('Mail forwarded, result was ' . $result);
+	}
+
+
+	/**
+	 * the mail was accepted (HTTP 201) but the app reported it had no authorized
+	 * recipient, so nothing was filed. Report it on STDERR without failing, so the
+	 * mail is not endlessly retried by the MDA (it can never succeed).
+	 *
+	 * @param string $result
+	 */
+	private function warnIfNotFiled(string $result): void {
+		$decoded = json_decode($result, true);
+		if (is_array($decoded) && array_key_exists('warning', $decoded)) {
+			fwrite(STDERR, 'Mail forwarded but not filed: ' . $decoded['warning'] . "\n");
+		}
 	}
 
 

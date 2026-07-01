@@ -87,7 +87,12 @@ class RemoteController extends Controller {
 		try {
 			if ($content !== 'null') {
 				$content = base64_decode(rawurldecode($content));
-				$this->mailService->parseMail($content, $this->userId);
+				if (!$this->mailService->parseMail($content, $this->userId)) {
+					return new DataResponse(
+						['warning' => 'mail had no authorized recipient; nothing was filed'],
+						Http::STATUS_CREATED
+					);
+				}
 			}
 
 			return new DataResponse(['ok'], Http::STATUS_CREATED);

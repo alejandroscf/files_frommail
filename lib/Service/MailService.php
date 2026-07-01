@@ -88,9 +88,12 @@ class MailService {
 	 * @param string $content
 	 * @param string $userId
 	 *
+	 * @return bool true if at least one authorized recipient was filed, false if
+	 *              the mail had no authorized recipient (nothing was filed)
+	 *
 	 * @throws Exception
 	 */
-	public function parseMail(string $content, string $userId): void {
+	public function parseMail(string $content, string $userId): bool {
 		$mail = new Parser();
 		$mail->setText($content);
 
@@ -99,6 +102,7 @@ class MailService {
 		$data['userId'] = $userId;
 
 		$errors = [];
+		$handled = 0;
 		$done = [];
 		$toAddresses = array_merge($mail->getAddresses('to'), $mail->getAddresses('cc'));
 		foreach ($toAddresses as $toAddress) {
@@ -108,7 +112,9 @@ class MailService {
 			}
 
 			try {
-				$this->generateLocalContentFromMail($mail, $to, $data);
+				if ($this->generateLocalContentFromMail($mail, $to, $data)) {
+					$handled++;
+				}
 			} catch (Exception $e) {
 				$this->miscService->log('could not generate LocalContent from Mail - ' . $e->getMessage());
 				$errors[] = $to . ': ' . $e->getMessage();
@@ -120,6 +126,17 @@ class MailService {
 		if (!empty($errors)) {
 			throw new Exception('could not generate LocalContent from Mail - ' . implode('; ', $errors));
 		}
+
+		if ($handled === 0) {
+			$recipients = implode(', ', array_column($toAddresses, 'address'));
+			$this->miscService->log(
+				'mail caught but no authorized recipient among: ' . $recipients . ' - nothing was filed'
+			);
+
+			return false;
+		}
+
+		return true;
 	}
 
 
@@ -128,6 +145,8 @@ class MailService {
 	 * @param string $to
 	 * @param array $data
 	 *
+	 * @return bool true if $to is an authorized address and its content was filed
+	 *
 	 * @throws AddressInfoException
 	 * @throws GenericFileException
 	 * @throws NotAFolderException
@@ -135,11 +154,11 @@ class MailService {
 	 * @throws NotPermittedException
 	 * @throws LockedException
 	 */
-	private function generateLocalContentFromMail(Parser $mail, string $to, array $data): void {
+	private function generateLocalContentFromMail(Parser $mail, string $to, array $data): bool {
 		$toInfo = $this->getMailAddressInfo($to);
 		$this->miscService->log($to . ' ' . json_encode($toInfo));
 		if (empty($toInfo)) {
-			return;
+			return false;
 		}
 
 		$text = $data['text'];
@@ -154,6 +173,8 @@ class MailService {
 		$folder = $this->getMailFolder($userId, $to, $from);
 		$this->createLocalFile($folder, $id, 'mail-' . $subject . '.txt', $text);
 		$this->createLocalFileFromAttachments($id, $folder, $mail->getAttachments());
+
+		return true;
 	}
 
 
